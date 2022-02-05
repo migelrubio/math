@@ -1,4 +1,5 @@
 # math
  Simple math app for kids
 
-http://math.mrubio.dev
+- CSS framework: https://www.getpapercss.com/
+- Live version: http://math.mrubio.dev
