@@ -1,0 +1,289 @@
+<!DOCadd html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math</title>
+  <link rel="stylesheet" href="https://unpkg.com/papercss@1.8.3/dist/paper.min.css">
+  <style>
+    @font-face {
+      font-family: 'Gloria Hallelujah';
+      font-style: normal;
+      font-weight: 400;
+      font-display: fallback;
+      src: local('Gloria Hallelujah'), local('GloriaHallelujah'), url(fonts/font.woff2) format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    body {
+      margin: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;  
+      height: 100vh;
+      display: grid;    
+    }
+    .numPad {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .btn-enter {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .btn-num {
+      font-size: 1.25em;
+      font-weight: bold;
+      margin: 0;
+    }
+    #btn-nueva {
+      font-size: 1.25em;
+    }
+    #question, #answer {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.5;
+      min-height: 72px;
+    }
+    #answer {
+      /*color: white;*/
+    }
+    #level {
+      font-size: 1.5em;
+      font-weight: bold;
+      text-align: right;
+      line-height: 1.5;
+      min-height: 72px;
+      padding: 10px;
+    }
+    #barra {
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    #operaciones {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    #nueva-container {
+      text-align: center;
+    }
+    .btn-operacion {
+      opacity: .1;
+      font-weight: normal;
+      font-size: 1.25em;
+    }
+    .btn-operacion.activo {
+      opacity: 1;
+      font-weight: bold;
+    }
+    /*No esta funcionando*/
+    body /deep/ button{
+      width: 100% !important;
+      height: 100%;
+    }
+    .paper-switch-tile {
+      margin:0 !important;
+      height: 40px !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+    .paper-switch-tile-card-front, .paper-switch-tile-card-back {
+      line-height: 35px !important;
+    }
+    p {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="barra">
+      <fieldset class="form-group" id="operaciones">
+        <label for="btn-suma" class="paper-switch-tile">
+          <input id="btn-suma" name="btn-suma" type="checkbox" onchange="toggleSuma()" checked>
+          <div class="paper-switch-tile-card border">
+            <div class="paper-switch-tile-card-front border">+</div>
+            <div class="paper-switch-tile-card-back border border-secondary background-secondary">+</div>
+          </div>
+        </label>
+        <label for="btn-resta" class="paper-switch-tile">
+          <input id="btn-resta" name="btn-suma" type="checkbox" onchange="toggleResta()">
+          <div class="paper-switch-tile-card border">
+            <div class="paper-switch-tile-card-front border">-</div>
+            <div class="paper-switch-tile-card-back border border-secondary background-secondary">-</div>
+          </div>
+        </label>
+        <label for="btn-multiplicacion" class="paper-switch-tile">
+          <input id="btn-multiplicacion" name="btn-suma" type="checkbox" onchange="toggleMultiplicacion()">
+          <div class="paper-switch-tile-card border">
+            <div class="paper-switch-tile-card-front border">x</div>
+            <div class="paper-switch-tile-card-back border border-secondary background-secondary">x</div>
+          </div>
+        </label>
+        <label for="btn-division" class="paper-switch-tile">
+          <input id="btn-division" name="btn-suma" type="checkbox" onchange="toggleDivision()">
+          <div class="paper-switch-tile-card border">
+            <div class="paper-switch-tile-card-front border">/</div>
+            <div class="paper-switch-tile-card-back border border-secondary background-secondary">/</div>
+          </div>
+        </label>
+      </fieldset>
+      <div id="level"></div>
+    </div>
+
+    <div id="nueva-container">
+      <button class="btn-nueva btn-success-outline" id="btn-nueva" onclick="nueva()" elevation="2">Empezar</button>
+    </div>
+    <p class="question" id="question"></p>
+    <p class="answer" id="answer"></p>
+    <div class="numPad">
+      <button class="btn-num btn-block" onclick="add(1)">1</button>
+      <button class="btn-num btn-block" onclick="add(2)">2</button>
+      <button class="btn-num btn-block" onclick="add(3)">3</button>
+      <button class="btn-num btn-block" onclick="add(4)">4</button>
+      <button class="btn-num btn-block" onclick="add(5)">5</button>
+      <button class="btn-num btn-block" onclick="add(6)">6</button>
+      <button class="btn-num btn-block" onclick="add(7)">7</button>
+      <button class="btn-num btn-block" onclick="add(8)">8</button>
+      <button class="btn-num btn-block" onclick="add(9)">9</button>
+      <button class="btn-num btn-block" onclick="del()""">del</button>
+      <button class="btn-num btn-block" onclick="add(0)">0</button>
+      <button class="btn-num btn-block btn-success" onclick="enter()">ok</button>
+    </div>
+  </div>
+  <script>
+    let msg = new SpeechSynthesisUtterance();
+    msg.lang = 'es';
+    msg.rate = .9;
+    let level = 5;
+    let num1;
+    let num2;
+    let answer = "";
+    let question = "";
+    let levelElement = document.getElementById("level");
+    let questionElement = document.getElementById("question");
+    let answerElement = document.getElementById("answer");
+    let btnNueva = document.getElementById("btn-nueva");
+    levelElement.innerHTML = `Nivel: ${level}`;
+    let suma = true;
+    let resta = false;
+    let multiplicacion = false;
+    let division = false;
+    let sumaElement = document.getElementById("btn-suma");
+    let restaElement = document.getElementById("btn-resta");
+    let multiplicacionElement = document.getElementById("btn-multiplicacion");
+    let divisionElement = document.getElementById("btn-division");
+    let op = 0;
+    window.onload = (event) => {
+      //nueva();
+      document.body.requestFullscreen();
+    };
+    function toggleSuma() {
+      suma = !suma;
+      sumaElement.classList.toggle("activo");
+    }
+    function toggleResta() {
+      resta = !resta;
+      restaElement.classList.toggle("activo");
+    }
+    function toggleMultiplicacion() {
+      multiplicacion = !multiplicacion;
+      multiplicacionElement.classList.toggle("activo");
+    }
+    function toggleDivision() {
+      division = !division;
+      divisionElement.classList.toggle("activo");
+    }
+    function nueva() {
+      document.querySelector('#nueva-container').style.display = 'none';
+      let operaciones = [suma, resta, multiplicacion, division];
+      if ( suma || resta || multiplicacion || division ) {
+        do {
+          op = Math.floor(Math.random() * operaciones.length);
+        } while ( !operaciones[op] );
+        // 0 suma, 1 resta, 2 multiplicacion, 3 division
+        let symbols = ["+", "-", "x", "/"];
+        let palabras = ["más", "menos", "por", "entre"];
+        nuevosNumeros();
+        //si es resta, evitar negativos
+        if ( op == 1) {
+          while ( num1 < num2 ) {
+            nuevosNumeros();
+          }
+        }
+        //si es division, evitar fracciones y 0
+        if ( op == 3) {
+          while ( num2 == 0 || num1 % num2 != 0 ) {
+            nuevosNumeros();
+          }
+        }
+        answer = "?";
+        question = `${num1} ${symbols[op]} ${num2}`;
+        questionElement.innerHTML = question;
+        answerElement.innerHTML = answer;
+        msg.text = `${num1} ${palabras[op]} ${num2}`;
+        window.speechSynthesis.speak(msg);
+        btnNueva.textContent = "Nueva";
+      } else {
+        msg.text = "Selecciona al menos una operación";
+        window.speechSynthesis.speak(msg);
+      }
+    }
+    function nuevosNumeros(){
+      num1 = Math.floor(Math.random() * level);
+      num2 = Math.floor(Math.random() * level);
+    }
+    function add(val) {
+      if (question != "") {
+        answerElement.classList.remove("text-danger");
+        if (answer != "?") {
+          answer += val.toString();
+        } else {
+          answer = val.toString();
+        } 
+        answerElement.innerHTML = answer;
+      }
+    }
+    function del() {
+      answerElement.classList.remove("text-danger");
+      answer = answer.slice(0, -1);
+      if (answer == "") {
+        answer = "?";
+      }
+      answerElement.innerHTML = answer;
+    }
+    function enter() {
+      let correct = false;
+      switch(op) {
+        case 0:
+          correct = num1 + num2 == parseInt(answer);
+          break;
+        case 1:
+          correct = num1 - num2 == parseInt(answer);
+          break;
+        case 2:
+          correct = num1 * num2 == parseInt(answer);
+          break;
+        case 3:
+          correct = num1 / num2 == parseInt(answer);
+          break;
+      }
+      if (correct) {
+        msg.text = "correcto!";
+        window.speechSynthesis.speak(msg);
+        level++;
+        levelElement.innerHTML = `Nivel: ${level}`;
+        nueva();
+      } else {
+        msg.text = "incorrecto";
+        window.speechSynthesis.speak(msg);
+        answerElement.className = "text-danger";
+      }
+    }
+  </script>
+</body>
+</html>

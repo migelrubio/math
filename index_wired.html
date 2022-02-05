@@ -1,0 +1,258 @@
+<!DOCadd html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math</title>
+  <link rel="preload" href="fonts/font.woff2" as="font">
+  <style>
+    @font-face {
+      font-family: 'Gloria Hallelujah';
+      font-style: normal;
+      font-weight: 400;
+      font-display: fallback;
+      src: local('Gloria Hallelujah'), local('GloriaHallelujah'), url(fonts/font.woff2) format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    body {
+      font-family: 'Gloria Hallelujah', sans-serif;
+      margin: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;  
+      height: 100vh;
+      display: grid;    
+    }
+    .numPad {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .btn-enter {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .btn-num {
+      line-height: 3;
+      font-size: 1.25em;
+      font-weight: bold;
+    }
+    #btn-nueva {
+      font-size: 1.25em;
+    }
+    #question, #answer {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.5;
+      min-height: 72px;
+    }
+    #answer.wrong {
+      color: red;
+    }
+    #level {
+      font-size: 1.5em;
+      font-weight: bold;
+      text-align: right;
+      line-height: 1.5;
+      min-height: 72px;
+      padding: 10px;
+    }
+    #barra {
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    #operaciones {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr;
+    }
+    #nueva-container {
+      text-align: center;
+    }
+    .btn-operacion {
+      opacity: .1;
+      font-weight: normal;
+      font-size: 1.25em;
+    }
+    .btn-operacion.activo {
+      opacity: 1;
+      font-weight: bold;
+    }
+    /*No esta funcionando*/
+    body /deep/ button{
+      width: 100% !important;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    
+  </script>
+  <div class="container">
+    <div id="barra">
+      <div id="operaciones">
+        <wired-button class="btn-operacion activo" id="btn-suma" elevation="3" onclick="toggleSuma()">+</wired-button>
+        <wired-button class="btn-operacion" id="btn-resta" onclick="toggleResta()">-</wired-button>
+        <wired-button class="btn-operacion" id="btn-multiplicacion" onclick="toggleMultiplicacion()">x</wired-button>
+        <wired-button class="btn-operacion" id="btn-division" onclick="toggleDivision()">/</wired-button>
+      </div>
+      <div id="level"></div>
+    </div>
+
+    <div class="question" id="question">
+      <div id="nueva-container">
+        <wired-button class="btn-nueva" id="btn-nueva" onclick="nueva()" elevation="2">Empezar</wired-button>
+      </div>
+    </div>
+    <div class="answer" id="answer"></div>
+    <div class="numPad">
+      <wired-button class="btn-num" onclick="add(1)">1</wired-button>
+      <wired-button class="btn-num" onclick="add(2)">2</wired-button>
+      <wired-button class="btn-num" onclick="add(3)">3</wired-button>
+      <wired-button class="btn-num" onclick="add(4)">4</wired-button>
+      <wired-button class="btn-num" onclick="add(5)">5</wired-button>
+      <wired-button class="btn-num" onclick="add(6)">6</wired-button>
+      <wired-button class="btn-num" onclick="add(7)">7</wired-button>
+      <wired-button class="btn-num" onclick="add(8)">8</wired-button>
+      <wired-button class="btn-num" onclick="add(9)">9</wired-button>
+      <wired-button class="btn-num" onclick="del()""">del</wired-button>
+      <wired-button class="btn-num" onclick="add(0)">0</wired-button>
+      <wired-button class="btn-num btn-enter" onclick="enter()">ok</wired-button>
+    </div>
+  </div>
+  <script type="module" src="https://unpkg.com/wired-elements?module"></script>
+  <script>
+    let msg = new SpeechSynthesisUtterance();
+    msg.lang = 'es';
+    msg.rate = .9;
+    let level = 5;
+    let num1;
+    let num2;
+    let answer = "";
+    let question = "";
+    let levelElement = document.getElementById("level");
+    let questionElement = document.getElementById("question");
+    let answerElement = document.getElementById("answer");
+    let btnNueva = document.getElementById("btn-nueva");
+    levelElement.innerHTML = `Nivel: ${level}`;
+    let suma = true;
+    let resta = false;
+    let multiplicacion = false;
+    let division = false;
+    let sumaElement = document.getElementById("btn-suma");
+    let restaElement = document.getElementById("btn-resta");
+    let multiplicacionElement = document.getElementById("btn-multiplicacion");
+    let divisionElement = document.getElementById("btn-division");
+    let op = 0;
+    window.onload = (event) => {
+      //nueva();
+      document.querySelectorAll('wired-button').forEach(el =>{
+        console.log(el);
+        el.shadowRoot.querySelector('button').setAttribute('style','width: 100%; height: 100%;');
+      });
+      document.body.requestFullscreen();
+    };
+    function toggleSuma() {
+      suma = !suma;
+      sumaElement.classList.toggle("activo");
+      sumaElement.setAttribute("elevation", suma ? "3" : "0");
+    }
+    function toggleResta() {
+      resta = !resta;
+      restaElement.classList.toggle("activo");
+      restaElement.setAttribute("elevation", resta ? "3" : "0");
+    }
+    function toggleMultiplicacion() {
+      multiplicacion = !multiplicacion;
+      multiplicacionElement.classList.toggle("activo");
+      multiplicacionElement.setAttribute("elevation", multiplicacion ? "3" : "0");
+    }
+    function toggleDivision() {
+      division = !division;
+      divisionElement.classList.toggle("activo");
+      divisionElement.setAttribute("elevation", division ? "3" : "0");
+    }
+    function nueva() {
+      let operaciones = [suma, resta, multiplicacion, division];
+      if ( suma || resta || multiplicacion || division ) {
+        do {
+          op = Math.floor(Math.random() * operaciones.length);
+        } while ( !operaciones[op] );
+        // 0 suma, 1 resta, 2 multiplicacion, 3 division
+        let symbols = ["+", "-", "x", "/"];
+        let palabras = ["más", "menos", "por", "entre"];
+        nuevosNumeros();
+        //si es resta, evitar negativos
+        if ( op == 1) {
+          while ( num1 < num2 ) {
+            nuevosNumeros();
+          }
+        }
+        //si es division, evitar fracciones
+        if ( op == 3) {
+          while ( num1 % num2 != 0 ) {
+            nuevosNumeros();
+          }
+        }
+        answer = "";
+        question = `${num1} ${symbols[op]} ${num2}`;
+        questionElement.innerHTML = question;
+        answerElement.innerHTML = answer;
+        msg.text = `${num1} ${palabras[op]} ${num2}`;
+        window.speechSynthesis.speak(msg);
+        btnNueva.textContent = "Nueva";
+      } else {
+        msg.text = "Selecciona al menos una operación";
+        window.speechSynthesis.speak(msg);
+      }
+    }
+    function nuevosNumeros(){
+      num1 = Math.floor(Math.random() * level) + 1;
+        num2 = Math.floor(Math.random() * level) + 1;
+    }
+    function add(val) {
+      answerElement.className = "";
+      answer += val;
+      answerElement.innerHTML = answer;
+    }
+    function del() {
+      answerElement.className = "";
+      answer = answer.slice(0, -1);
+      answerElement.innerHTML = answer;
+    }
+    function enter() {
+      let correct = false;
+      switch(op) {
+        case 0:
+          correct = num1 + num2 == parseInt(answer);
+          break;
+        case 1:
+          correct = num1 - num2 == parseInt(answer);
+          break;
+        case 2:
+          correct = num1 * num2 == parseInt(answer);
+          break;
+        case 3:
+          correct = num1 / num2 == parseInt(answer);
+          break;
+      }
+      if (correct) {
+        msg.text = "correcto!";
+        window.speechSynthesis.speak(msg);
+        level++;
+        levelElement.innerHTML = `Nivel: ${level}`;
+        nueva();
+      } else {
+        msg.text = "incorrecto";
+        window.speechSynthesis.speak(msg);
+        answerElement.className = "wrong";
+      }
+    }
+  </script>
+</body>
+</html>
